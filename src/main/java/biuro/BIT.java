@@ -1,13 +1,12 @@
 package biuro;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
 class BIT {
 
-    boolean notLoggedIn = true;
+    private boolean notLoggedIn = true;
+    private Staff loggedStaff;
     private ArrayList<Accommodation> accommodations = new ArrayList<>();
     private ArrayList<Attraction> attractions = new ArrayList<>();
     private ArrayList<Restaurant> restaurants = new ArrayList<>();
@@ -50,20 +49,14 @@ class BIT {
         return in.nextLine();
     }
 
-    private String getInput() {
-        Scanner in = new Scanner(System.in);
-        return in.nextLine();
-    }
-
     private void createNews() {
 
         String name = getInput("name");
         String content = getInput("content");
 
         ArrayList<String> tagsNews = createTags("news");
-        Staff person = null;
 
-        News news = new News(name, content, LocalDate.now(), person, tagsNews);
+        News news = new News(name, content, LocalDate.now(), loggedStaff, tagsNews);
         addNews(news);
     }
 
@@ -145,11 +138,16 @@ class BIT {
 
     private void login() {
         String staffName = getInput("staffName");
-        System.out.print("staffSurname");
-        String staffSurname = getInput();
+        String staffSurname = getInput("staffSurname");
+        loggedStaff = findStaffByNameAndSurname(staffName, staffSurname);
+    }
 
-        Optional<Staff> loginMatched = staff.stream().filter(staff -> staffName.equals(staff.getStaffName())).findFirst();
-        notLoggedIn = !loginMatched.get().getStaffSurname().equals(staffSurname);
+    private Staff findStaffByNameAndSurname(String name, String surname) {
+        Optional<Staff> loginMatched = staff.stream().filter(staff -> name.equals(staff.getStaffName())).findFirst();
+        if (loginMatched.get().getStaffSurname().equals(surname)) {
+            notLoggedIn = false;
+        }
+        return loginMatched.get();
     }
 
     private void register() {
@@ -158,13 +156,79 @@ class BIT {
         notLoggedIn = true;
     }
 
+    private Set<String> getAllTags() {
+        Set<String> tags = new HashSet<>();
+        for (Restaurant restaurant : restaurants) {
+            tags.addAll(restaurant.getTags());
+        }
+        for (Attraction attraction : attractions) {
+            tags.addAll(attraction.getTags());
+        }
+        for (Accommodation accommodation : accommodations) {
+            tags.addAll(accommodation.getTags());
+        }
+        for (News news : news) {
+            tags.addAll(news.getTags());
+        }
+        return tags;
+    }
+
+    private void printTags() {
+        Set<String> allTags = getAllTags();
+        int i = 0;
+        System.out.println("__All tags__");
+        for (String s : allTags) {
+            System.out.println(i++ + ". " + s);
+        }
+        System.out.println("____________");
+
+    }
+
+    private void collectServicesByTags() {
+        String tag = getInput("tag");
+
+        ArrayList<Restaurant> restaurantsTag = new ArrayList<>();
+        ArrayList<Accommodation> accommodationsTag = new ArrayList<>();
+        ArrayList<Attraction> attractionsTag = new ArrayList<>();
+        ArrayList<News> newsTag = new ArrayList<>();
+
+        for (Restaurant restaurant : restaurants) {
+            if (restaurant.getTags().contains(tag)) {
+                restaurantsTag.add(restaurant);
+            }
+        }
+
+        for (Accommodation accommodation : accommodations) {
+            if (accommodation.getTags().contains(tag)) {
+                accommodationsTag.add(accommodation);
+            }
+        }
+
+        for (Attraction attraction : attractions) {
+            if (attraction.getTags().contains(tag)) {
+                attractionsTag.add(attraction);
+            }
+        }
+
+        for (News news : news) {
+            if (news.getTags().contains(tag)) {
+                newsTag.add(news);
+            }
+        }
+
+        System.out.println(restaurantsTag.toString());
+        System.out.println(accommodationsTag.toString());
+        System.out.println(attractionsTag.toString());
+        System.out.println(newsTag.toString());
+    }
+
     void service() {
 
         while (notLoggedIn) {
             Scanner in = new Scanner(System.in);
             System.out.println("    1. Login \n" +
                     "    2. Register \n" +
-                    "Other. Exit");
+                    "    0. Exit");
             System.out.print("Input -> ");
             String input = in.nextLine();
             switch (input) {
@@ -188,7 +252,9 @@ class BIT {
                     "\n    7. Get Accommodation " +
                     "\n    8. Get Attraction" +
                     "\n    9. Get News" +
-                    "\n   10. Get Staff");
+                    "\n   10. Get Staff" +
+                    "\n   11. Get Tags" +
+                    "\n   12. Get objects by tag");
             System.out.print("Input -> ");
             String input = in.nextLine();
             switch (input) {
@@ -221,6 +287,12 @@ class BIT {
                     break;
                 case "10":
                     System.out.println(getStaff().toString());
+                    break;
+                case "11":
+                    printTags();
+                    break;
+                case "12":
+                    collectServicesByTags();
                     break;
             }
         }
