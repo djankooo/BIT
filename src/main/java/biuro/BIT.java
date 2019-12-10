@@ -4,9 +4,21 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class BIT {
 
+    private static final String STAFF_NAME = "staffName";
+    private static final String STAFF_SURNAME = "staffSurname";
+    private static final String ADDRESS = "addr1ess";
+    private static final String TELEPHONE = "telephone";
+    private static final String TYPE = "type";
+    private static final String DESCRIPTION = "description";
+    private static final String CONTENT = "content";
+    private static final String NAME = "name";
+    private static final String PRICE = "price";
+    private static final Logger LOG = Logger.getLogger(BIT.class.getName());
     private Staff loggedUser = null;
     private ArrayList<Accommodation> accommodations = new ArrayList<>();
     private ArrayList<Attraction> attractions = new ArrayList<>();
@@ -36,8 +48,8 @@ class BIT {
 
         String name = getInput("name");
         String typeOfCousine = getInput("type of cousine");
-        String address = getInput("address");
-        String telephone = getInput("telephone");
+        String address = getInput(ADDRESS);
+        String telephone = getInput(TELEPHONE);
 
         ArrayList<String> tagsRestaurant = createTags("restaurant");
         Restaurant restaurant = new Restaurant(name, typeOfCousine, createContactDetails(address, telephone), tagsRestaurant);
@@ -52,23 +64,22 @@ class BIT {
 
     private void createNews() {
 
-        String name = getInput("name");
-        String content = getInput("content");
+        String name = getInput(NAME);
+        String content = getInput(CONTENT);
 
         ArrayList<String> tagsNews = createTags("news");
 
-        News news = new News(name, content, LocalDate.now(), loggedUser, tagsNews);
-        addNews(news);
+        addNews(new News(name, content, LocalDate.now(), loggedUser, tagsNews));
     }
 
     private void createAttraction() {
 
-        String name = getInput("name");
-        String description = getInput("description");
-        String type = getInput("type");
-        String price = getInput("price");
-        String address = getInput("address");
-        String telephone = getInput("telephone");
+        String name = getInput(NAME);
+        String description = getInput(DESCRIPTION);
+        String type = getInput(TYPE);
+        String price = getInput(PRICE);
+        String address = getInput(ADDRESS);
+        String telephone = getInput(TELEPHONE);
 
         ArrayList<String> tagsAttraction = createTags("attraction");
         Attraction attraction = new Attraction(name, description, type, Integer.parseInt(price), createContactDetails(address, telephone), tagsAttraction);
@@ -77,11 +88,11 @@ class BIT {
 
     private void createAccommodation() {
 
-        String name = getInput("name");
-        String type = getInput("type");
-        String price = getInput("price");
-        String address = getInput("address");
-        String telephone = getInput("telephone");
+        String name = getInput(NAME);
+        String type = getInput(TYPE);
+        String price = getInput(PRICE);
+        String address = getInput(ADDRESS);
+        String telephone = getInput(TELEPHONE);
 
         ContactDetails contactDetails = createContactDetails(address, telephone);
         ArrayList<String> tagsAccommodation = createTags("accommodation");
@@ -141,14 +152,12 @@ class BIT {
     }
 
     private void login() {
-        String staffName = getInput("staffName");
-        String staffSurname = getInput("staffSurname");
+        String staffName = getInput(STAFF_NAME);
+        String staffSurname = getInput(STAFF_SURNAME);
 
         Optional<Staff> staffByNameAndSurname = findStaffByNameAndSurname(staffName, staffSurname);
 
-        staffByNameAndSurname.ifPresent((staff) -> {
-            loggedUser = staff;
-        });
+        staffByNameAndSurname.ifPresent(staff -> loggedUser = staff);
 
         if (!staffByNameAndSurname.isPresent()) {
             throw new NoSuchElementException("No user found with name : " + staffName + " and surname : " + staffSurname);
@@ -156,12 +165,12 @@ class BIT {
     }
 
     private void register() {
-        String staffName = getInput("staffName");
-        String staffSurname = getInput("staffSurname");
+        String staffName = getInput(STAFF_NAME);
+        String staffSurname = getInput(STAFF_SURNAME);
 
         Optional<Staff> staffByNameAndSurname = findStaffByNameAndSurname(staffName, staffSurname);
 
-        staffByNameAndSurname.ifPresent((staff) -> {
+        staffByNameAndSurname.ifPresent(staff -> {
             throw new NoSuchElementException("There is user with name : " + staffName + " and surname : " + staffSurname);
         });
 
@@ -179,8 +188,8 @@ class BIT {
         for (Accommodation accommodation : accommodations) {
             tags.addAll(accommodation.getTags());
         }
-        for (News news : news) {
-            tags.addAll(news.getTags());
+        for (News info : news) {
+            tags.addAll(info.getTags());
         }
         return tags;
     }
@@ -188,11 +197,11 @@ class BIT {
     private void printTags() {
         Set<String> allTags = getAllTags();
         int i = 0;
-        System.out.println("__All tags__");
+        LOG.log(Level.INFO, "____TAGS____");
         for (String s : allTags) {
             System.out.println(i++ + ". " + s);
         }
-        System.out.println("____________");
+        LOG.log(Level.INFO, "_END OF TAGS_");
 
     }
 
@@ -222,9 +231,9 @@ class BIT {
             }
         }
 
-        for (News news : news) {
-            if (news.getTags().contains(tag)) {
-                newsTag.add(news);
+        for (News info : news) {
+            if (info.getTags().contains(tag)) {
+                newsTag.add(info);
             }
         }
 
@@ -274,7 +283,10 @@ class BIT {
                 case "2":
                     register();
                     break;
+                default:
+                    return;
             }
+
         }
 
         while (loggedUser != null) {
@@ -308,8 +320,8 @@ class BIT {
                     createNews();
                     break;
                 case "5":
-                    String staffName = getInput("staffName");
-                    String staffSurname = getInput("staffSurname");
+                    String staffName = getInput(STAFF_NAME);
+                    String staffSurname = getInput(STAFF_SURNAME);
                     createStaff(staffName, staffSurname);
                     break;
                 case "6":
@@ -334,14 +346,16 @@ class BIT {
                     collectServicesByTags();
                     break;
                 case "13":
-                    String guideName = getInput("staffName");
-                    String guideSurname = getInput("staffSurname");
+                    String guideName = getInput(STAFF_NAME);
+                    String guideSurname = getInput(STAFF_SURNAME);
                     String startDate = getInput("startDate (dd/MM/yyyy)");
                     String endDate = getInput("staffSurname (dd/MM/yyyy)");
                     String desc = getInput("tour description");
 
                     bookTour(guideName, guideSurname, startDate, endDate, desc);
                     break;
+                default:
+                    continue;
             }
         }
     }
