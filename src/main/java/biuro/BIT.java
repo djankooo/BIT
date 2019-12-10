@@ -7,14 +7,12 @@ import java.util.*;
 
 class BIT {
 
-    private boolean notLoggedIn = true;
-    private Staff loggedStaff;
+    private Staff loggedUser = null;
     private ArrayList<Accommodation> accommodations = new ArrayList<>();
     private ArrayList<Attraction> attractions = new ArrayList<>();
     private ArrayList<Restaurant> restaurants = new ArrayList<>();
     private ArrayList<News> news = new ArrayList<>();
     private ArrayList<Staff> staffList = new ArrayList<>();
-
 
     private static ArrayList<String> createTags(String type) {
         ArrayList<String> tags = new ArrayList<>();
@@ -59,7 +57,7 @@ class BIT {
 
         ArrayList<String> tagsNews = createTags("news");
 
-        News news = new News(name, content, LocalDate.now(), loggedStaff, tagsNews);
+        News news = new News(name, content, LocalDate.now(), loggedUser, tagsNews);
         addNews(news);
     }
 
@@ -91,10 +89,7 @@ class BIT {
         addAccommodation(accommodation);
     }
 
-    private void createStaff() {
-
-        String staffName = getInput("staffName");
-        String staffSurname = getInput("staffSurname");
+    public void createStaff(String staffName, String staffSurname) {
         Staff staff = new Staff(staffName, staffSurname);
         addStaff(staff);
     }
@@ -139,24 +134,38 @@ class BIT {
         return staffList;
     }
 
+    private Optional<Staff> findStaffByNameAndSurname(String staffName, String staffSurname) {
+        return staffList.stream()
+                .filter(staff -> staff.getStaffName().equals(staffName) && staff.getStaffSurname().equals(staffSurname))
+                .findFirst();
+    }
+
     private void login() {
         String staffName = getInput("staffName");
         String staffSurname = getInput("staffSurname");
-        loggedStaff = findStaffByNameAndSurname(staffName, staffSurname);
-    }
 
-    private Staff findStaffByNameAndSurname(String name, String surname) {
-        Optional<Staff> loginMatched = staffList.stream().filter(staff -> name.equals(staff.getStaffName())).findFirst();
-        notLoggedIn = (!loginMatched.get().getStaffSurname().equals(surname));
-        return loginMatched.get();
+        Optional<Staff> staffByNameAndSurname = findStaffByNameAndSurname(staffName, staffSurname);
+
+        staffByNameAndSurname.ifPresent((staff) -> {
+            loggedUser = staff;
+        });
+
+        if (!staffByNameAndSurname.isPresent()) {
+            throw new NoSuchElementException("No user found with name : " + staffName + " and surname : " + staffSurname);
+        }
     }
 
     private void register() {
         String staffName = getInput("staffName");
         String staffSurname = getInput("staffSurname");
 
+        Optional<Staff> staffByNameAndSurname = findStaffByNameAndSurname(staffName, staffSurname);
+
+        staffByNameAndSurname.ifPresent((staff) -> {
+            throw new NoSuchElementException("There is user with name : " + staffName + " and surname : " + staffSurname);
+        });
+
         addStaff(new Staff(staffName, staffSurname));
-        notLoggedIn = true;
     }
 
     private Set<String> getAllTags() {
@@ -225,40 +234,33 @@ class BIT {
         System.out.println(newsTag.toString());
     }
 
+    public void bookTour(String staffName, String staffSurname, String startDateString, String endDateString, String desc) throws ParseException {
 
-    // TODO : refactor
-    private void bookTour() throws ParseException {
-        String staffName = getInput("staffName");
-        String staffSurname = getInput("staffSurname");
-        String startDate = getInput("startDate (dd/MM/yyyy)");
-        String endDate = getInput("endDate (dd/MM/yyyy)");
-        String desc = getInput("staffSurname");
+        Date startDate = stringToDate(startDateString);
+        Date endDate = stringToDate(endDateString);
 
-        for (Staff person : staffList) {
-            if (person.getStaffName().equals(staffName) && person.getStaffSurname().equals(staffSurname))
-                if (person.getTours().stream().noneMatch(tour -> {
-                    try {
-                        return overlap(tour.getStartDate(), tour.getEndDate(), stringToDate(startDate), stringToDate(endDate));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    return false;
-                }))
-                    person.getTours().add(new Tour(stringToDate(startDate), stringToDate(endDate), desc));
+        Optional<Staff> guide = findStaffByNameAndSurname(staffName, staffSurname);
+
+        if (guide.isPresent()) {
+            if (guide.get().getTours().stream().noneMatch(tour -> overlap(startDate, endDate, tour.getStartDate(), tour.getEndDate()))) {
+                guide.get().getTours().add(new Tour(startDate, endDate, desc));
+            }
+        } else {
+            throw new IllegalArgumentException("Date is overlapping with other tour");
         }
     }
 
-    private boolean overlap(Date start1, Date end1, Date start2, Date end2) {
+    public boolean overlap(Date start1, Date end1, Date start2, Date end2) {
         return start1.getTime() <= end2.getTime() && start2.getTime() <= end1.getTime();
     }
 
-    private Date stringToDate(String stringDate) throws ParseException {
+    public Date stringToDate(String stringDate) throws ParseException {
         return new SimpleDateFormat("dd/MM/yyyy").parse(stringDate);
     }
 
     void service() throws ParseException {
 
-        while (notLoggedIn) {
+        while (loggedUser == null) {
             Scanner in = new Scanner(System.in);
             System.out.println("    1. Login \n" +
                     "    2. Register \n" +
@@ -275,7 +277,7 @@ class BIT {
             }
         }
 
-        while (!notLoggedIn) {
+        while (loggedUser != null) {
             Scanner in = new Scanner(System.in);
             System.out.println("    1. Create Restaurant" +
                     "\n    2. Create Accommodation" +
@@ -288,7 +290,8 @@ class BIT {
                     "\n    9. Get News" +
                     "\n   10. Get Staff" +
                     "\n   11. Get Tags" +
-                    "\n   12. Get objects by tag");
+                    "\n   12. Get objects by tag" +
+                    "\n   13. Create Tour");
             System.out.print("Input -> ");
             String input = in.nextLine();
             switch (input) {
@@ -305,7 +308,9 @@ class BIT {
                     createNews();
                     break;
                 case "5":
-                    createStaff();
+                    String staffName = getInput("staffName");
+                    String staffSurname = getInput("staffSurname");
+                    createStaff(staffName, staffSurname);
                     break;
                 case "6":
                     System.out.println(getRestaurants().toString());
@@ -329,7 +334,13 @@ class BIT {
                     collectServicesByTags();
                     break;
                 case "13":
-                    bookTour();
+                    String guideName = getInput("staffName");
+                    String guideSurname = getInput("staffSurname");
+                    String startDate = getInput("startDate (dd/MM/yyyy)");
+                    String endDate = getInput("staffSurname (dd/MM/yyyy)");
+                    String desc = getInput("tour description");
+
+                    bookTour(guideName, guideSurname, startDate, endDate, desc);
                     break;
             }
         }
