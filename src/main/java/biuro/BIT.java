@@ -1,5 +1,7 @@
 package biuro;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -11,7 +13,8 @@ class BIT {
     private ArrayList<Attraction> attractions = new ArrayList<>();
     private ArrayList<Restaurant> restaurants = new ArrayList<>();
     private ArrayList<News> news = new ArrayList<>();
-    private ArrayList<Staff> staff = new ArrayList<>();
+    private ArrayList<Staff> staffList = new ArrayList<>();
+
 
     private static ArrayList<String> createTags(String type) {
         ArrayList<String> tags = new ArrayList<>();
@@ -88,12 +91,12 @@ class BIT {
         addAccommodation(accommodation);
     }
 
-    private Staff createStaff() {
+    private void createStaff() {
 
         String staffName = getInput("staffName");
         String staffSurname = getInput("staffSurname");
-
-        return new Staff(staffName, staffSurname);
+        Staff staff = new Staff(staffName, staffSurname);
+        addStaff(staff);
     }
 
     private void addAccommodation(Accommodation accommodation) {
@@ -113,7 +116,7 @@ class BIT {
     }
 
     private void addStaff(Staff staff) {
-        this.staff.add(staff);
+        staffList.add(staff);
     }
 
     private ArrayList<Accommodation> getAccommodations() {
@@ -133,7 +136,7 @@ class BIT {
     }
 
     private ArrayList<Staff> getStaff() {
-        return staff;
+        return staffList;
     }
 
     private void login() {
@@ -143,16 +146,16 @@ class BIT {
     }
 
     private Staff findStaffByNameAndSurname(String name, String surname) {
-        Optional<Staff> loginMatched = staff.stream().filter(staff -> name.equals(staff.getStaffName())).findFirst();
-        if (loginMatched.get().getStaffSurname().equals(surname)) {
-            notLoggedIn = false;
-        }
+        Optional<Staff> loginMatched = staffList.stream().filter(staff -> name.equals(staff.getStaffName())).findFirst();
+        notLoggedIn = (!loginMatched.get().getStaffSurname().equals(surname));
         return loginMatched.get();
     }
 
     private void register() {
-        Staff staff = createStaff();
-        addStaff(staff);
+        String staffName = getInput("staffName");
+        String staffSurname = getInput("staffSurname");
+
+        addStaff(new Staff(staffName, staffSurname));
         notLoggedIn = true;
     }
 
@@ -222,7 +225,38 @@ class BIT {
         System.out.println(newsTag.toString());
     }
 
-    void service() {
+
+    // TODO : refactor
+    private void bookTour() throws ParseException {
+        String staffName = getInput("staffName");
+        String staffSurname = getInput("staffSurname");
+        String startDate = getInput("startDate (dd/MM/yyyy)");
+        String endDate = getInput("endDate (dd/MM/yyyy)");
+        String desc = getInput("staffSurname");
+
+        for (Staff person : staffList) {
+            if (person.getStaffName().equals(staffName) && person.getStaffSurname().equals(staffSurname))
+                if (person.getTours().stream().noneMatch(tour -> {
+                    try {
+                        return overlap(tour.getStartDate(), tour.getEndDate(), stringToDate(startDate), stringToDate(endDate));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    return false;
+                }))
+                    person.getTours().add(new Tour(stringToDate(startDate), stringToDate(endDate), desc));
+        }
+    }
+
+    private boolean overlap(Date start1, Date end1, Date start2, Date end2) {
+        return start1.getTime() <= end2.getTime() && start2.getTime() <= end1.getTime();
+    }
+
+    private Date stringToDate(String stringDate) throws ParseException {
+        return new SimpleDateFormat("dd/MM/yyyy").parse(stringDate);
+    }
+
+    void service() throws ParseException {
 
         while (notLoggedIn) {
             Scanner in = new Scanner(System.in);
@@ -293,6 +327,9 @@ class BIT {
                     break;
                 case "12":
                     collectServicesByTags();
+                    break;
+                case "13":
+                    bookTour();
                     break;
             }
         }

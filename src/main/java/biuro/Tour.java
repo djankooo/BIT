@@ -4,18 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class Tour {
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private Date startDate;
+    private Date endDate;
     private String description;
 
     @Override
     public String toString() {
-        return "\nSTART DATE : " + this.getStartDate() + "\nEND DATER : " + this.getEndDate() + "\nDESCRIPTION : " + this.getDescription() + "\n";
+        return "\n\t\tSTART DATE : " + this.getStartDate() + "\n\t\tEND DATER : " + this.getEndDate() + "\n\t\tDESCRIPTION : " + this.getDescription() + "\n";
     }
 }
