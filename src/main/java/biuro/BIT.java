@@ -1,7 +1,8 @@
 package biuro;
 
+import helpers.Helper;
+
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Level;
@@ -9,24 +10,26 @@ import java.util.logging.Logger;
 
 class BIT {
 
-    private static final String STAFF_NAME = "staffName";
-    private static final String STAFF_SURNAME = "staffSurname";
-    private static final String ADDRESS = "addr1ess";
-    private static final String TELEPHONE = "telephone";
-    private static final String TYPE = "type";
-    private static final String DESCRIPTION = "description";
-    private static final String CONTENT = "content";
-    private static final String NAME = "name";
-    private static final String PRICE = "price";
-    private static final Logger LOG = Logger.getLogger(BIT.class.getName());
-    private Staff loggedUser = null;
-    private ArrayList<Accommodation> accommodations = new ArrayList<>();
-    private ArrayList<Attraction> attractions = new ArrayList<>();
-    private ArrayList<Restaurant> restaurants = new ArrayList<>();
-    private ArrayList<News> news = new ArrayList<>();
-    private ArrayList<Staff> staffList = new ArrayList<>();
+    public static final String STAFF_NAME = "staffName";
+    public static final String STAFF_SURNAME = "staffSurname";
+    public static final String ADDRESS = "addr1ess";
+    public static final String TELEPHONE = "telephone";
+    public static final String TYPE = "type";
+    public static final String DESCRIPTION = "description";
+    public static final String CONTENT = "content";
+    public static final String NAME = "name";
+    public static final String PRICE = "price";
+    public static final String COUSINE = "type of cousine";
+    public static final String RESTAURANT = "restaurnat";
+    public static final Logger LOG = Logger.getLogger(BIT.class.getName());
+    public Staff loggedUser = null;
+    public ArrayList<Accommodation> accommodations = new ArrayList<>();
+    public ArrayList<Attraction> attractions = new ArrayList<>();
+    public ArrayList<Restaurant> restaurants = new ArrayList<>();
+    public ArrayList<News> news = new ArrayList<>();
+    public ArrayList<Staff> staffList = new ArrayList<>();
 
-    private static ArrayList<String> createTags(String type) {
+    public static ArrayList<String> createTags(String type) {
         ArrayList<String> tags = new ArrayList<>();
         Scanner in = new Scanner(System.in);
         System.out.println("Podaj pierwszy tag [" + type + "]");
@@ -39,30 +42,24 @@ class BIT {
         return tags;
     }
 
-    private static ContactDetails createContactDetails(String address, String telephone) {
+    public static ContactDetails createContactDetails(String address, String telephone) {
         ArrayList<String> tagContactDetails = createTags("contact details");
         return new ContactDetails(address, telephone, tagContactDetails);
     }
 
-    private void createRestaurant() {
-
-        String name = getInput("name");
-        String typeOfCousine = getInput("type of cousine");
-        String address = getInput(ADDRESS);
-        String telephone = getInput(TELEPHONE);
-
-        ArrayList<String> tagsRestaurant = createTags("restaurant");
+    public void createRestaurant(String name, String telephone, String typeOfCousine, String address) {
+        ArrayList<String> tagsRestaurant = createTags(RESTAURANT);
         Restaurant restaurant = new Restaurant(name, typeOfCousine, createContactDetails(address, telephone), tagsRestaurant);
         addRestaurant(restaurant);
     }
 
-    private String getInput(String input) {
+    public String getInput(String input) {
         Scanner in = new Scanner(System.in);
         System.out.print("Enter " + input + " -> ");
         return in.nextLine();
     }
 
-    private void createNews() {
+    public void createNews() {
 
         String name = getInput(NAME);
         String content = getInput(CONTENT);
@@ -72,7 +69,7 @@ class BIT {
         addNews(new News(name, content, LocalDate.now(), loggedUser, tagsNews));
     }
 
-    private void createAttraction() {
+    public void createAttraction() {
 
         String name = getInput(NAME);
         String description = getInput(DESCRIPTION);
@@ -86,7 +83,7 @@ class BIT {
         addAttraction(attraction);
     }
 
-    private void createAccommodation() {
+    public void createAccommodation() {
 
         String name = getInput(NAME);
         String type = getInput(TYPE);
@@ -105,56 +102,53 @@ class BIT {
         addStaff(staff);
     }
 
-    private void addAccommodation(Accommodation accommodation) {
+    public void addAccommodation(Accommodation accommodation) {
         this.accommodations.add(accommodation);
     }
 
-    private void addAttraction(Attraction attraction) {
+    public void addAttraction(Attraction attraction) {
         this.attractions.add(attraction);
     }
 
-    private void addRestaurant(Restaurant restaurant) {
+    public void addRestaurant(Restaurant restaurant) {
         this.restaurants.add(restaurant);
     }
 
-    private void addNews(News news) {
+    public void addNews(News news) {
         this.news.add(news);
     }
 
-    private void addStaff(Staff staff) {
+    public void addStaff(Staff staff) {
         staffList.add(staff);
     }
 
-    private ArrayList<Accommodation> getAccommodations() {
+    public ArrayList<Accommodation> getAccommodations() {
         return accommodations;
     }
 
-    private ArrayList<Attraction> getAttractions() {
+    public ArrayList<Attraction> getAttractions() {
         return attractions;
     }
 
-    private ArrayList<Restaurant> getRestaurants() {
+    public ArrayList<Restaurant> getRestaurants() {
         return restaurants;
     }
 
-    private ArrayList<News> getNews() {
+    public ArrayList<News> getNews() {
         return news;
     }
 
-    private ArrayList<Staff> getStaff() {
+    public ArrayList<Staff> getStaff() {
         return staffList;
     }
 
-    private Optional<Staff> findStaffByNameAndSurname(String staffName, String staffSurname) {
+    public Optional<Staff> findStaffByNameAndSurname(String staffName, String staffSurname) {
         return staffList.stream()
                 .filter(staff -> staff.getStaffName().equals(staffName) && staff.getStaffSurname().equals(staffSurname))
                 .findFirst();
     }
 
-    private void login() {
-        String staffName = getInput(STAFF_NAME);
-        String staffSurname = getInput(STAFF_SURNAME);
-
+    public void login(String staffName, String staffSurname) {
         Optional<Staff> staffByNameAndSurname = findStaffByNameAndSurname(staffName, staffSurname);
 
         staffByNameAndSurname.ifPresent(staff -> loggedUser = staff);
@@ -164,10 +158,7 @@ class BIT {
         }
     }
 
-    private void register() {
-        String staffName = getInput(STAFF_NAME);
-        String staffSurname = getInput(STAFF_SURNAME);
-
+    public void register(String staffName, String staffSurname) {
         Optional<Staff> staffByNameAndSurname = findStaffByNameAndSurname(staffName, staffSurname);
 
         staffByNameAndSurname.ifPresent(staff -> {
@@ -177,7 +168,7 @@ class BIT {
         addStaff(new Staff(staffName, staffSurname));
     }
 
-    private Set<String> getAllTags() {
+    public Set<String> getAllTags() {
         Set<String> tags = new HashSet<>();
         for (Restaurant restaurant : restaurants) {
             tags.addAll(restaurant.getTags());
@@ -194,7 +185,7 @@ class BIT {
         return tags;
     }
 
-    private void printTags() {
+    public void printTags() {
         Set<String> allTags = getAllTags();
         int i = 0;
         LOG.log(Level.INFO, "____TAGS____");
@@ -205,7 +196,7 @@ class BIT {
 
     }
 
-    private void collectServicesByTags() {
+    public void collectServicesByTags() {
         String tag = getInput("tag");
 
         ArrayList<Restaurant> restaurantsTag = new ArrayList<>();
@@ -245,26 +236,18 @@ class BIT {
 
     public void bookTour(String staffName, String staffSurname, String startDateString, String endDateString, String desc) throws ParseException {
 
-        Date startDate = stringToDate(startDateString);
-        Date endDate = stringToDate(endDateString);
+        Date startDate = Helper.stringToDate(startDateString);
+        Date endDate = Helper.stringToDate(endDateString);
 
         Optional<Staff> guide = findStaffByNameAndSurname(staffName, staffSurname);
 
         if (guide.isPresent()) {
-            if (guide.get().getTours().stream().noneMatch(tour -> overlap(startDate, endDate, tour.getStartDate(), tour.getEndDate()))) {
+            if (guide.get().getTours().stream().noneMatch(tour -> Helper.overlap(startDate, endDate, tour.getStartDate(), tour.getEndDate()))) {
                 guide.get().getTours().add(new Tour(startDate, endDate, desc));
             }
         } else {
             throw new IllegalArgumentException("Date is overlapping with other tour");
         }
-    }
-
-    public boolean overlap(Date start1, Date end1, Date start2, Date end2) {
-        return start1.getTime() <= end2.getTime() && start2.getTime() <= end1.getTime();
-    }
-
-    public Date stringToDate(String stringDate) throws ParseException {
-        return new SimpleDateFormat("dd/MM/yyyy").parse(stringDate);
     }
 
     void service() throws ParseException {
@@ -278,10 +261,14 @@ class BIT {
             String input = in.nextLine();
             switch (input) {
                 case "1":
-                    login();
+                    String staffNameLogin = getInput(STAFF_NAME);
+                    String staffSurnameLogin = getInput(STAFF_SURNAME);
+                    login(staffNameLogin, staffSurnameLogin);
                     break;
                 case "2":
-                    register();
+                    String staffNameRegister = getInput(STAFF_NAME);
+                    String staffSurnameRegister = getInput(STAFF_SURNAME);
+                    register(staffNameRegister, staffSurnameRegister);
                     break;
                 default:
                     return;
@@ -308,7 +295,11 @@ class BIT {
             String input = in.nextLine();
             switch (input) {
                 case "1":
-                    createRestaurant();
+                    String name = getInput(NAME);
+                    String typeOfCousine = getInput(COUSINE);
+                    String address = getInput(ADDRESS);
+                    String telephone = getInput(TELEPHONE);
+                    createRestaurant(name, telephone, typeOfCousine, address);
                     break;
                 case "2":
                     createAccommodation();

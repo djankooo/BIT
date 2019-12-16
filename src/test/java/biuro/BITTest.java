@@ -4,48 +4,37 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.text.ParseException;
+import java.util.NoSuchElementException;
 
-public class BITTest {
+public class BITTest extends AppTest {
 
     private BIT bit;
+
+    private static final String STAFF_NAME = "testName";
+    private static final String STAFF_SURNAME = "testSurname";
 
     @Before
     public void setUp() {
         bit = new BIT();
-        bit.createStaff("testName", "testSurname");
     }
 
-    // TODO : to finish
-    @Test
-    public void shouldReturnException() throws ParseException {
-        String staffName = "testName";
-        String staffSurname = "testSurname";
-        String startDate = "10/11/2019";
-        String endDate = "15/11/2019";
-        String desc = "tour description";
 
-        bit.bookTour(staffName, staffSurname, startDate, endDate, desc);
+    @Test
+    public void shouldCorrectlyRegisterUser() {
+
+        //when
+        bit.register(STAFF_NAME, STAFF_SURNAME);
+
+        //then
+        Assert.assertEquals("testName", bit.getStaff().get(0).getStaffName());
     }
 
-    @Test
-    public void shouldReturnThatDatesAreOverlapping() throws ParseException {
-        String startDate = "10/11/2019";
-        String endDate = "15/11/2019";
-        String startDate2 = "13/11/2019";
-        String endDate2 = "16/11/2019";
+    @Test(expected = NoSuchElementException.class)
+    public void shouldThrowRegistrationException() {
 
-        Assert.assertTrue(bit.overlap(bit.stringToDate(startDate), bit.stringToDate(endDate), bit.stringToDate(startDate2), bit.stringToDate(endDate2)));
-    }
+        //when, then
+        bit.register(STAFF_NAME, STAFF_SURNAME);
 
-    @Test
-    public void shouldReturnThatDatesAreNotOverlapping() throws ParseException {
-
-        String startDate = "10/11/2019";
-        String endDate = "15/11/2019";
-        String startDate2 = "16/11/2019";
-        String endDate2 = "17/11/2019";
-
-        Assert.assertFalse(bit.overlap(bit.stringToDate(startDate), bit.stringToDate(endDate), bit.stringToDate(startDate2), bit.stringToDate(endDate2)));
+        bit.register(STAFF_NAME, STAFF_SURNAME);
     }
 }
