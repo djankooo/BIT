@@ -253,7 +253,6 @@ class BIT {
     }
 
     void service() throws ParseException {
-
         while (loggedUser == null) {
             Scanner in = new Scanner(System.in);
             System.out.println("    1. Login \n" +
