@@ -253,7 +253,8 @@ class BIT {
 
         if (guide.isPresent()) {
             if (guide.get().getTours().stream().noneMatch(tour -> overlap(startDate, endDate, tour.getStartDate(), tour.getEndDate()))) {
-                guide.get().getTours().add(new Tour(startDate, endDate, desc));
+                Tour tour = new Tour(startDate, endDate, desc);
+                guide.get().getTours().add(tour);
             }
         } else {
             throw new IllegalArgumentException("Date is overlapping with other tour");
