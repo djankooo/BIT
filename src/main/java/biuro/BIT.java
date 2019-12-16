@@ -50,6 +50,7 @@ class BIT {
     public void createRestaurant(String name, String telephone, String typeOfCousine, String address) {
         ArrayList<String> tagsRestaurant = createTags(RESTAURANT);
         Restaurant restaurant = new Restaurant(name, typeOfCousine, createContactDetails(address, telephone), tagsRestaurant);
+
         addRestaurant(restaurant);
     }
 
@@ -244,6 +245,7 @@ class BIT {
         if (guide.isPresent()) {
             if (guide.get().getTours().stream().noneMatch(tour -> Helper.overlap(startDate, endDate, tour.getStartDate(), tour.getEndDate()))) {
                 guide.get().getTours().add(new Tour(startDate, endDate, desc));
+
             }
         } else {
             throw new IllegalArgumentException("Date is overlapping with other tour");
