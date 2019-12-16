@@ -252,102 +252,111 @@ class BIT {
         }
     }
 
+    private void logout() {
+        loggedUser = null;
+    }
+
     void service() throws ParseException {
-        while (loggedUser == null) {
-            Scanner in = new Scanner(System.in);
-            System.out.println("    1. Login \n" +
-                    "    2. Register \n" +
-                    "    0. Exit");
-            System.out.print("Input -> ");
-            String input = in.nextLine();
-            switch (input) {
-                case "1":
-                    String staffNameLogin = getInput(STAFF_NAME);
-                    String staffSurnameLogin = getInput(STAFF_SURNAME);
-                    login(staffNameLogin, staffSurnameLogin);
-                    break;
-                case "2":
-                    String staffNameRegister = getInput(STAFF_NAME);
-                    String staffSurnameRegister = getInput(STAFF_SURNAME);
-                    register(staffNameRegister, staffSurnameRegister);
-                    break;
-                default:
-                    return;
+        while (true) {
+            while (loggedUser == null) {
+                Scanner in = new Scanner(System.in);
+                System.out.println("    1. Login \n" +
+                        "    2. Register \n" +
+                        "    0. Exit");
+                System.out.print("Input -> ");
+                String input = in.nextLine();
+                switch (input) {
+                    case "1":
+                        String staffNameLogin = getInput(STAFF_NAME);
+                        String staffSurnameLogin = getInput(STAFF_SURNAME);
+                        login(staffNameLogin, staffSurnameLogin);
+                        break;
+                    case "2":
+                        String staffNameRegister = getInput(STAFF_NAME);
+                        String staffSurnameRegister = getInput(STAFF_SURNAME);
+                        register(staffNameRegister, staffSurnameRegister);
+                        break;
+                    default:
+                        return;
+                }
+
             }
 
-        }
+            while (loggedUser != null) {
+                Scanner in = new Scanner(System.in);
+                System.out.println("    1. Create Restaurant" +
+                        "\n    2. Create Accommodation" +
+                        "\n    3. Create Attraction" +
+                        "\n    4. Create News" +
+                        "\n    5. Create Staff" +
+                        "\n    6. Get Restaurants" +
+                        "\n    7. Get Accommodation " +
+                        "\n    8. Get Attraction" +
+                        "\n    9. Get News" +
+                        "\n   10. Get Staff" +
+                        "\n   11. Get Tags" +
+                        "\n   12. Get objects by tag" +
+                        "\n   13. Create Tour" +
+                        "\n    0. Logout");
+                System.out.print("Input -> ");
+                String input = in.nextLine();
+                switch (input) {
+                    case "1":
+                        String name = getInput(NAME);
+                        String typeOfCousine = getInput(COUSINE);
+                        String address = getInput(ADDRESS);
+                        String telephone = getInput(TELEPHONE);
+                        createRestaurant(name, telephone, typeOfCousine, address);
+                        break;
+                    case "2":
+                        createAccommodation();
+                        break;
+                    case "3":
+                        createAttraction();
+                        break;
+                    case "4":
+                        createNews();
+                        break;
+                    case "5":
+                        String staffName = getInput(STAFF_NAME);
+                        String staffSurname = getInput(STAFF_SURNAME);
+                        createStaff(staffName, staffSurname);
+                        break;
+                    case "6":
+                        System.out.println(getRestaurants().toString());
+                        break;
+                    case "7":
+                        System.out.println(getAccommodations().toString());
+                        break;
+                    case "8":
+                        System.out.println(getAttractions().toString());
+                        break;
+                    case "9":
+                        System.out.println(getNews().toString());
+                        break;
+                    case "10":
+                        System.out.println(getStaff().toString());
+                        break;
+                    case "11":
+                        printTags();
+                        break;
+                    case "12":
+                        collectServicesByTags();
+                        break;
+                    case "13":
+                        String guideName = getInput(STAFF_NAME);
+                        String guideSurname = getInput(STAFF_SURNAME);
+                        String startDate = getInput("startDate (dd/MM/yyyy)");
+                        String endDate = getInput("staffSurname (dd/MM/yyyy)");
+                        String desc = getInput("tour description");
 
-        while (loggedUser != null) {
-            Scanner in = new Scanner(System.in);
-            System.out.println("    1. Create Restaurant" +
-                    "\n    2. Create Accommodation" +
-                    "\n    3. Create Attraction" +
-                    "\n    4. Create News" +
-                    "\n    5. Create Staff" +
-                    "\n    6. Get Restaurants" +
-                    "\n    7. Get Accommodation " +
-                    "\n    8. Get Attraction" +
-                    "\n    9. Get News" +
-                    "\n   10. Get Staff" +
-                    "\n   11. Get Tags" +
-                    "\n   12. Get objects by tag" +
-                    "\n   13. Create Tour");
-            System.out.print("Input -> ");
-            String input = in.nextLine();
-            switch (input) {
-                case "1":
-                    String name = getInput(NAME);
-                    String typeOfCousine = getInput(COUSINE);
-                    String address = getInput(ADDRESS);
-                    String telephone = getInput(TELEPHONE);
-                    createRestaurant(name, telephone, typeOfCousine, address);
-                    break;
-                case "2":
-                    createAccommodation();
-                    break;
-                case "3":
-                    createAttraction();
-                    break;
-                case "4":
-                    createNews();
-                    break;
-                case "5":
-                    String staffName = getInput(STAFF_NAME);
-                    String staffSurname = getInput(STAFF_SURNAME);
-                    createStaff(staffName, staffSurname);
-                    break;
-                case "6":
-                    System.out.println(getRestaurants().toString());
-                    break;
-                case "7":
-                    System.out.println(getAccommodations().toString());
-                    break;
-                case "8":
-                    System.out.println(getAttractions().toString());
-                    break;
-                case "9":
-                    System.out.println(getNews().toString());
-                    break;
-                case "10":
-                    System.out.println(getStaff().toString());
-                    break;
-                case "11":
-                    printTags();
-                    break;
-                case "12":
-                    collectServicesByTags();
-                    break;
-                case "13":
-                    String guideName = getInput(STAFF_NAME);
-                    String guideSurname = getInput(STAFF_SURNAME);
-                    String startDate = getInput("startDate (dd/MM/yyyy)");
-                    String endDate = getInput("staffSurname (dd/MM/yyyy)");
-                    String desc = getInput("tour description");
-
-                    bookTour(guideName, guideSurname, startDate, endDate, desc);
-                    break;
-                default:
-                    continue;
+                        bookTour(guideName, guideSurname, startDate, endDate, desc);
+                        break;
+                    case "0":
+                        logout();
+                        break;
+                    default:
+                }
             }
         }
     }
