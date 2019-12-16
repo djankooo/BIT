@@ -6,12 +6,11 @@ import org.junit.Test;
 
 import java.util.NoSuchElementException;
 
-public class BITTest extends AppTest {
-
-    private BIT bit;
+public class BITTest {
 
     private static final String STAFF_NAME = "testName";
     private static final String STAFF_SURNAME = "testSurname";
+    private BIT bit;
 
     @Before
     public void setUp() {

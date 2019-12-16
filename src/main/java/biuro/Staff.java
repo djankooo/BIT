@@ -5,13 +5,14 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Setter
 public class Staff {
     private String staffName;
     private String staffSurname;
-    private ArrayList<Tour> tours;
+    private List<Tour> tours;
 
     Staff(String staffName, String staffSurname) {
         this.staffName = staffName;

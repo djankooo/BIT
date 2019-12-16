@@ -10,27 +10,27 @@ import java.util.logging.Logger;
 
 class BIT {
 
-    public static final String STAFF_NAME = "staffName";
-    public static final String STAFF_SURNAME = "staffSurname";
-    public static final String ADDRESS = "addr1ess";
-    public static final String TELEPHONE = "telephone";
-    public static final String TYPE = "type";
-    public static final String DESCRIPTION = "description";
-    public static final String CONTENT = "content";
-    public static final String NAME = "name";
-    public static final String PRICE = "price";
-    public static final String COUSINE = "type of cousine";
-    public static final String RESTAURANT = "restaurnat";
-    public static final Logger LOG = Logger.getLogger(BIT.class.getName());
-    public Staff loggedUser = null;
-    public ArrayList<Accommodation> accommodations = new ArrayList<>();
-    public ArrayList<Attraction> attractions = new ArrayList<>();
-    public ArrayList<Restaurant> restaurants = new ArrayList<>();
-    public ArrayList<News> news = new ArrayList<>();
-    public ArrayList<Staff> staffList = new ArrayList<>();
+    private static final String STAFF_NAME = "staffName";
+    private static final String STAFF_SURNAME = "staffSurname";
+    private static final String ADDRESS = "addr1ess";
+    private static final String TELEPHONE = "telephone";
+    private static final String TYPE = "type";
+    private static final String DESCRIPTION = "description";
+    private static final String CONTENT = "content";
+    private static final String NAME = "name";
+    private static final String PRICE = "price";
+    private static final String COUSINE = "type of cousine";
+    private static final String RESTAURANT = "restaurnat";
+    private static final Logger LOG = Logger.getLogger(BIT.class.getName());
+    private Staff loggedUser = null;
+    private List<Accommodation> accommodations = new ArrayList<>();
+    private List<Attraction> attractions = new ArrayList<>();
+    private List<Restaurant> restaurants = new ArrayList<>();
+    private List<News> news = new ArrayList<>();
+    private List<Staff> staffList = new ArrayList<>();
 
-    public static ArrayList<String> createTags(String type) {
-        ArrayList<String> tags = new ArrayList<>();
+    public static List<String> createTags(String type) {
+        List<String> tags = new ArrayList<>();
         Scanner in = new Scanner(System.in);
         System.out.println("Podaj pierwszy tag [" + type + "]");
         String input = in.nextLine();
@@ -43,12 +43,12 @@ class BIT {
     }
 
     public static ContactDetails createContactDetails(String address, String telephone) {
-        ArrayList<String> tagContactDetails = createTags("contact details");
+        List<String> tagContactDetails = createTags("contact details");
         return new ContactDetails(address, telephone, tagContactDetails);
     }
 
     public void createRestaurant(String name, String telephone, String typeOfCousine, String address) {
-        ArrayList<String> tagsRestaurant = createTags(RESTAURANT);
+        List<String> tagsRestaurant = createTags(RESTAURANT);
         Restaurant restaurant = new Restaurant(name, typeOfCousine, createContactDetails(address, telephone), tagsRestaurant);
 
         addRestaurant(restaurant);
@@ -65,7 +65,7 @@ class BIT {
         String name = getInput(NAME);
         String content = getInput(CONTENT);
 
-        ArrayList<String> tagsNews = createTags("news");
+        List<String> tagsNews = createTags("news");
 
         addNews(new News(name, content, LocalDate.now(), loggedUser, tagsNews));
     }
@@ -79,7 +79,7 @@ class BIT {
         String address = getInput(ADDRESS);
         String telephone = getInput(TELEPHONE);
 
-        ArrayList<String> tagsAttraction = createTags("attraction");
+        List<String> tagsAttraction = createTags("attraction");
         Attraction attraction = new Attraction(name, description, type, Integer.parseInt(price), createContactDetails(address, telephone), tagsAttraction);
         addAttraction(attraction);
     }
@@ -93,7 +93,7 @@ class BIT {
         String telephone = getInput(TELEPHONE);
 
         ContactDetails contactDetails = createContactDetails(address, telephone);
-        ArrayList<String> tagsAccommodation = createTags("accommodation");
+        List<String> tagsAccommodation = createTags("accommodation");
         Accommodation accommodation = new Accommodation(name, type, contactDetails, Integer.parseInt(price), tagsAccommodation);
         addAccommodation(accommodation);
     }
@@ -123,23 +123,23 @@ class BIT {
         staffList.add(staff);
     }
 
-    public ArrayList<Accommodation> getAccommodations() {
+    public List<Accommodation> getAccommodations() {
         return accommodations;
     }
 
-    public ArrayList<Attraction> getAttractions() {
+    public List<Attraction> getAttractions() {
         return attractions;
     }
 
-    public ArrayList<Restaurant> getRestaurants() {
+    public List<Restaurant> getRestaurants() {
         return restaurants;
     }
 
-    public ArrayList<News> getNews() {
+    public List<News> getNews() {
         return news;
     }
 
-    public ArrayList<Staff> getStaff() {
+    public List<Staff> getStaff() {
         return staffList;
     }
 
