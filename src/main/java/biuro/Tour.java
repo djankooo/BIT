@@ -12,10 +12,10 @@ import java.util.Date;
 public class Tour {
     private Date startDate;
     private Date endDate;
-    private String description;
+    private Attraction attraction;
 
     @Override
     public String toString() {
-        return "\n\t\tSTART DATE : " + this.getStartDate() + "\n\t\tEND DATER : " + this.getEndDate() + "\n\t\tDESCRIPTION : " + this.getDescription() + "\n";
+        return "\n\t\tSTART DATE : " + this.getStartDate() + "\n\t\tEND DATER : " + this.getEndDate() + "\n\t\tATTRACTION : " + this.getAttraction().toStringBooking() + "\n";
     }
 }

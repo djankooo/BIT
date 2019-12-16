@@ -21,6 +21,7 @@ class BIT {
     private static final String PRICE = "price";
     private static final String COUSINE = "type of cousine";
     private static final String RESTAURANT = "restaurnat";
+    private static final String ATTRACTION = "attraction";
     private static final Logger LOG = Logger.getLogger(BIT.class.getName());
     private Staff loggedUser = null;
     private List<Accommodation> accommodations = new ArrayList<>();
@@ -43,8 +44,7 @@ class BIT {
     }
 
     public static ContactDetails createContactDetails(String address, String telephone) {
-        List<String> tagContactDetails = createTags("contact details");
-        return new ContactDetails(address, telephone, tagContactDetails);
+        return new ContactDetails(address, telephone);
     }
 
     public void createRestaurant(String name, String telephone, String typeOfCousine, String address) {
@@ -235,7 +235,7 @@ class BIT {
         System.out.println(newsTag.toString());
     }
 
-    public void bookTour(String staffName, String staffSurname, String startDateString, String endDateString, String desc) throws ParseException {
+    public void bookTour(String staffName, String staffSurname, String startDateString, String endDateString, Attraction attraction) throws ParseException {
 
         Date startDate = Helper.stringToDate(startDateString);
         Date endDate = Helper.stringToDate(endDateString);
@@ -244,7 +244,7 @@ class BIT {
 
         if (guide.isPresent()) {
             if (guide.get().getTours().stream().noneMatch(tour -> Helper.overlap(startDate, endDate, tour.getStartDate(), tour.getEndDate()))) {
-                guide.get().getTours().add(new Tour(startDate, endDate, desc));
+                guide.get().getTours().add(new Tour(startDate, endDate, attraction));
 
             }
         } else {
@@ -317,6 +317,8 @@ class BIT {
                     case "10":
                         processBookingTour();
                         break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + in.nextLine());
                 }
             }
             while (loggedUser != null) {
@@ -397,12 +399,17 @@ class BIT {
 
     private void processBookingTour() throws ParseException
     {
+        System.out.println("Pick one of listed attractions");
+        System.out.println(getAttractions().toString());
+
+
+        String attraction = getInput(ATTRACTION);
+
         String guideName = getInput(STAFF_NAME);
         String guideSurname = getInput(STAFF_SURNAME);
         String startDate = getInput("startDate (dd/MM/yyyy)");
         String endDate = getInput("staffSurname (dd/MM/yyyy)");
-        String desc = getInput("tour description");
 
-        bookTour(guideName, guideSurname, startDate, endDate, desc);
+        bookTour(guideName, guideSurname, startDate, endDate, attractions.get(Integer.parseInt(attraction)));
     }
 }
