@@ -403,13 +403,30 @@ class BIT {
         System.out.println(getAttractions().toString());
 
 
-        String attraction = getInput(ATTRACTION);
+        String attractionName = getInput(ATTRACTION);
 
         String guideName = getInput(STAFF_NAME);
         String guideSurname = getInput(STAFF_SURNAME);
         String startDate = getInput("startDate (dd/MM/yyyy)");
-        String endDate = getInput("staffSurname (dd/MM/yyyy)");
+        String endDate = getInput("endDate (dd/MM/yyyy)");
 
-        bookTour(guideName, guideSurname, startDate, endDate, attractions.get(Integer.parseInt(attraction)));
+        try {
+            Attraction attraction = findAttractionByName(attractionName);
+            bookTour(guideName, guideSurname, startDate, endDate, attraction);
+        }catch (IllegalArgumentException e)
+        {
+            displayContent(e.getMessage());
+        }
     }
+
+    private Attraction findAttractionByName(String name)
+    {
+        for(Attraction attraction : attractions)
+        {
+            if(attraction.getName().equals(name))
+                return attraction;
+        }
+        throw new IllegalArgumentException("There is no attraction with given name");
+    }
+
 }
