@@ -52,7 +52,8 @@ class BIT {
         String telephone = getInput(TELEPHONE);
 
         ArrayList<String> tagsRestaurant = createTags("restaurant");
-        Restaurant restaurant = new Restaurant(name, typeOfCousine, createContactDetails(address, telephone), tagsRestaurant);
+        ContactDetails contactDetails = createContactDetails(address, telephone);
+        Restaurant restaurant = new Restaurant(name, typeOfCousine, contactDetails, tagsRestaurant);
         addRestaurant(restaurant);
     }
 
