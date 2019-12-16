@@ -258,33 +258,70 @@ class BIT {
 
     void service() throws ParseException {
         while (true) {
-            while (loggedUser == null) {
+            while (Objects.isNull(loggedUser)) {
                 Scanner in = new Scanner(System.in);
-                System.out.println("    1. Login \n" +
-                        "    2. Register \n" +
-                        "    0. Exit");
-                System.out.print("Input -> ");
-                String input = in.nextLine();
-                switch (input) {
+                displayContent("0:  Exit" +
+                        "\n1.  Login" +
+                        "\n2.  Register" +
+                        "\n3.  Show Restaurants" +
+                        "\n4.  Show Accommodations" +
+                        "\n5.  Show Attractions" +
+                        "\n6.  Show News" +
+                        "\n7.  Show Staff" +
+                        "\n8.  Show Tags" +
+                        "\n9.  Get objects by tag" +
+                        "\n10. Book Tour");
+                displayContent("Input -> ");
+                switch (in.nextLine()) {
+                    case "0":
+                        return;
                     case "1":
                         String staffNameLogin = getInput(STAFF_NAME);
                         String staffSurnameLogin = getInput(STAFF_SURNAME);
-                        login(staffNameLogin, staffSurnameLogin);
+                        try {
+                            login(staffNameLogin, staffSurnameLogin);
+                        } catch (NoSuchElementException e) {
+                            displayContent(e.getMessage());
+                        }
                         break;
                     case "2":
                         String staffNameRegister = getInput(STAFF_NAME);
                         String staffSurnameRegister = getInput(STAFF_SURNAME);
-                        register(staffNameRegister, staffSurnameRegister);
+                        try {
+                            register(staffNameRegister, staffSurnameRegister);
+                        } catch (NoSuchElementException e) {
+                            displayContent(e.getMessage());
+                        }
                         break;
-                    default:
-                        return;
+                    case "3":
+                        displayContent(getRestaurants().toString());
+                        break;
+                    case "4":
+                        displayContent(getAccommodations().toString());
+                        break;
+                    case "5":
+                        displayContent(getAttractions().toString());
+                        break;
+                    case "6":
+                        displayContent(getNews().toString());
+                        break;
+                    case "7":
+                        displayContent(getStaff().toString());
+                        break;
+                    case "8":
+                        displayContent(getAllTags().toString());
+                        break;
+                    case "9":
+                        collectServicesByTags();
+                        break;
+                    case "10":
+                        processBookingTour();
+                        break;
                 }
-
             }
-
             while (loggedUser != null) {
                 Scanner in = new Scanner(System.in);
-                System.out.println("    1. Create Restaurant" +
+                displayContent("    1. Create Restaurant" +
                         "\n    2. Create Accommodation" +
                         "\n    3. Create Attraction" +
                         "\n    4. Create News" +
@@ -298,9 +335,12 @@ class BIT {
                         "\n   12. Get objects by tag" +
                         "\n   13. Create Tour" +
                         "\n    0. Logout");
-                System.out.print("Input -> ");
+                displayContent("Input -> ");
                 String input = in.nextLine();
                 switch (input) {
+                    case "0":
+                        logout();
+                        break;
                     case "1":
                         String name = getInput(NAME);
                         String typeOfCousine = getInput(COUSINE);
@@ -344,20 +384,25 @@ class BIT {
                         collectServicesByTags();
                         break;
                     case "13":
-                        String guideName = getInput(STAFF_NAME);
-                        String guideSurname = getInput(STAFF_SURNAME);
-                        String startDate = getInput("startDate (dd/MM/yyyy)");
-                        String endDate = getInput("staffSurname (dd/MM/yyyy)");
-                        String desc = getInput("tour description");
-
-                        bookTour(guideName, guideSurname, startDate, endDate, desc);
+                        processBookingTour();
                         break;
-                    case "0":
-                        logout();
-                        break;
-                    default:
                 }
             }
         }
+    }
+    private void displayContent(String content)
+    {
+        System.out.println(content+ "\n");
+    }
+
+    private void processBookingTour() throws ParseException
+    {
+        String guideName = getInput(STAFF_NAME);
+        String guideSurname = getInput(STAFF_SURNAME);
+        String startDate = getInput("startDate (dd/MM/yyyy)");
+        String endDate = getInput("staffSurname (dd/MM/yyyy)");
+        String desc = getInput("tour description");
+
+        bookTour(guideName, guideSurname, startDate, endDate, desc);
     }
 }
