@@ -79,7 +79,7 @@ class BIT {
         String address = getInput(ADDRESS);
         String telephone = getInput(TELEPHONE);
 
-        List<String> tagsAttraction = createTags(ATTRACTION);
+        List<String> tagsAttraction = createTags("attraction");
         Attraction attraction = new Attraction(name, description, type, Integer.parseInt(price), createContactDetails(address, telephone), tagsAttraction);
         addAttraction(attraction);
     }
@@ -388,29 +388,40 @@ class BIT {
                     case "13":
                         processBookingTour();
                         break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + input);
                 }
             }
         }
     }
-    private void displayContent(String content)
-    {
-        System.out.println(content+ "\n");
+
+    private void displayContent(String content) {
+        System.out.println(content + "\n");
     }
 
-    private void processBookingTour() throws ParseException
-    {
+    private void processBookingTour() throws ParseException {
         System.out.println("Pick one of listed attractions");
         System.out.println(getAttractions().toString());
 
-        String attraction = getInput(ATTRACTION);
+        String attractionName = getInput(ATTRACTION);
 
         String guideName = getInput(STAFF_NAME);
         String guideSurname = getInput(STAFF_SURNAME);
         String startDate = getInput("startDate (dd/MM/yyyy)");
-        String endDate = getInput("staffSurname (dd/MM/yyyy)");
+        String endDate = getInput("endDate (dd/MM/yyyy)");
 
-        bookTour(guideName, guideSurname, startDate, endDate, attractions.get(Integer.parseInt(attraction)));
+        try {
+            Attraction attraction = findAttractionByName(attractionName);
+            bookTour(guideName, guideSurname, startDate, endDate, attraction);
+        } catch (IllegalArgumentException e) {
+            displayContent(e.getMessage());
+        }
     }
+
+    private Attraction findAttractionByName(String name) {
+        for (Attraction attraction : attractions) {
+            if (attraction.getName().equals(name))
+                return attraction;
+        }
+        throw new IllegalArgumentException("There is no attraction with given name");
+    }
+
 }
