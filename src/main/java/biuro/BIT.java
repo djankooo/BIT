@@ -79,7 +79,7 @@ class BIT {
         String address = getInput(ADDRESS);
         String telephone = getInput(TELEPHONE);
 
-        List<String> tagsAttraction = createTags("attraction");
+        List<String> tagsAttraction = createTags(ATTRACTION);
         Attraction attraction = new Attraction(name, description, type, Integer.parseInt(price), createContactDetails(address, telephone), tagsAttraction);
         addAttraction(attraction);
     }
@@ -388,6 +388,8 @@ class BIT {
                     case "13":
                         processBookingTour();
                         break;
+                    default:
+                        throw new IllegalStateException("Unexpected value: " + input);
                 }
             }
         }
@@ -401,7 +403,6 @@ class BIT {
     {
         System.out.println("Pick one of listed attractions");
         System.out.println(getAttractions().toString());
-
 
         String attraction = getInput(ATTRACTION);
 
