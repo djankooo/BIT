@@ -5,8 +5,6 @@ import org.junit.Test;
 
 import java.text.ParseException;
 
-import static org.junit.Assert.*;
-
 public class HelperTest {
 
     @Test

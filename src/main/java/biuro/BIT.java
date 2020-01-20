@@ -70,16 +70,7 @@ class BIT {
         addNews(new News(name, content, LocalDate.now(), loggedUser, tagsNews));
     }
 
-    public void createAttraction() {
-
-        String name = getInput(NAME);
-        String description = getInput(DESCRIPTION);
-        String type = getInput(TYPE);
-        String price = getInput(PRICE);
-        String address = getInput(ADDRESS);
-        String telephone = getInput(TELEPHONE);
-
-        List<String> tagsAttraction = createTags("attraction");
+    public void createAttraction(String name, String description, String type, String price, String address, String telephone, List<String> tagsAttraction) {
         Attraction attraction = new Attraction(name, description, type, Integer.parseInt(price), createContactDetails(address, telephone), tagsAttraction);
         addAttraction(attraction);
     }
@@ -194,7 +185,6 @@ class BIT {
             System.out.println(i++ + ". " + s);
         }
         LOG.log(Level.INFO, "_END OF TAGS_");
-
     }
 
     public void collectServicesByTags() {
@@ -246,9 +236,11 @@ class BIT {
             if (guide.get().getTours().stream().noneMatch(tour -> Helper.overlap(startDate, endDate, tour.getStartDate(), tour.getEndDate()))) {
                 guide.get().getTours().add(new Tour(startDate, endDate, attraction));
 
+            } else {
+                throw new IllegalArgumentException("Date is overlapping with other tour");
             }
         } else {
-            throw new IllegalArgumentException("Date is overlapping with other tour");
+            throw new IllegalArgumentException("There is no matching guide.");
         }
     }
 
@@ -354,7 +346,14 @@ class BIT {
                         createAccommodation();
                         break;
                     case "3":
-                        createAttraction();
+                        String nameAttraction = getInput(NAME);
+                        String descriptionAttraction = getInput(DESCRIPTION);
+                        String typeAttraction = getInput(TYPE);
+                        String priceAttraction = getInput(PRICE);
+                        String addressAttraction = getInput(ADDRESS);
+                        String telephoneAttraction = getInput(TELEPHONE);
+                        List<String> tagsAttraction = createTags("attraction");
+                        createAttraction(nameAttraction, descriptionAttraction, typeAttraction, priceAttraction, addressAttraction, telephoneAttraction, tagsAttraction);
                         break;
                     case "4":
                         createNews();
@@ -416,7 +415,7 @@ class BIT {
         }
     }
 
-    private Attraction findAttractionByName(String name) {
+    public Attraction findAttractionByName(String name) {
         for (Attraction attraction : attractions) {
             if (attraction.getName().equals(name))
                 return attraction;
